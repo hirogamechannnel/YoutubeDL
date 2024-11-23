@@ -34,7 +34,7 @@ def main():
     #Youtube_dlの設定
     ydl_Dic = {
         'outtmpl': f"{args.Output_Folder}/{args.Output_FileName}.%(ext)s",
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best' if args.Format == 'MP4' else 'bestaudio[ext=mp3]',
+        'format': 'bestvideo[ext=mp4]/bestaudio[ext=m4a]/best[ext=mp4]/best' if args.Format == 'MP4' else 'bestaudio[ext=mp3]',
     }
     
     with yt_dlp.YoutubeDL(ydl_Dic) as YDL:
