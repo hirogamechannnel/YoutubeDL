@@ -5,7 +5,7 @@ argparse:コマンドラインからの引数を取得できる
 import yt_dlp
 import argparse
 import sys
-
+import os
 
 def main():
     
@@ -30,12 +30,29 @@ def main():
 
     args = parser.parse_args()
 
+    #ffmpegのパス設定
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(script_dir)
+    ffmpeg_path = os.path.join(parent_dir, 'ffmpeg', 'bin', 'ffmpeg.exe')
 
-    #Youtube_dlの設定
+    #Yt_dlpの設定
     ydl_Dic = {
         'outtmpl': f"{args.Output_Folder}/{args.Output_FileName}.%(ext)s",
-        'format': 'bestvideo[ext=mp4]/bestaudio[ext=m4a]/best[ext=mp4]/best' if args.Format == 'MP4' else 'bestaudio[ext=mp3]',
+        'ffmpeg_location': ffmpeg_path,
     }
+
+    #Yt_dlpの設定_mp4
+    if args.Format == 'MP4':
+        ydl_Dic['format'] = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
+    #Yt_dlpの設定_mp3
+    elif args.Format == 'MP3':
+        ydl_Dic['format'] = 'bestaudio/best'
+        ydl_Dic['postprocessors'] = [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }]
+
     
     with yt_dlp.YoutubeDL(ydl_Dic) as YDL:
         YDL.download([args.URL])
